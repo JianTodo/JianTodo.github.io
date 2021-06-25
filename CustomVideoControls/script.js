@@ -24,7 +24,12 @@ window.onload = function() {
 	var volumeBar = document.getElementById("volume-bar");
 	
 	var duration = document.getElementById("time");
-	duration.innerHTML = video.currentTime.toString().toHHMMSS() + ' / ' + video.duration.toString().toHHMMSS();
+	video.onloadedmetadata = function() {
+  		console.log('metadata loaded!');
+  		console.log(this.duration);//this refers to myVideo
+		duration.innerHTML = video.currentTime.toString().toHHMMSS() + ' / ' + video.duration.toString().toHHMMSS();
+	};
+	// duration.innerHTML = video.currentTime.toString().toHHMMSS() + ' / ' + video.duration.toString().toHHMMSS();
 
 	// Event listener for the play/pause button
 	playButton.addEventListener("click", function() {
