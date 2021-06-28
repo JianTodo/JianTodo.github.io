@@ -1,6 +1,9 @@
 video::-webkit-media-controls {
   display: none;
 }
+video::controls {
+  display: none;
+}
 #video-container {
 	width: 640px;
 	height: 365px;
