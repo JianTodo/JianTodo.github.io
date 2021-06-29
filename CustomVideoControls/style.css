@@ -21,6 +21,14 @@
   display: none!important;
   -webkit-appearance: none;
 }
+
+video::-webkit-media-controls-enclosure {
+display: none !important;
+}
+#video-controls {
+z-index: 2147483647;
+}
+
 #video-container {
 	width: 640px;
 	height: 365px;
