@@ -104,11 +104,11 @@ blockquote {
 	border-bottom-right-radius: 10px;
 }
 
-.mdtable~table thead th:first-child td:first-child {
+.mdtable~table thead tr:first-child th:first-child {
 	border-top-right-radius: 10px;
 }
 
-.mdtable~table thead th:first-child td:last-child {
+.mdtable~table thead tr:first-child th:last-child {
 	border-top-left-radius: 10px;
 }
 
