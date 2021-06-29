@@ -1,19 +1,65 @@
-body 
-{
+/* Ref : https://www.freeformatter.com/css-beautifier.html */
+body {
 	font-family: "Trebuchet MS", Trebuchet, SimSun, sans-serif !important;
 }
 
-.post-body img, .post-body video
-{
+.post-body img,
+.post-body video {
 	width: 100% !important;
 }
 
+
 /* stackedit plugin*/
-blockquote
-{
-  color: #ffd54f;
-  border-left: 5px solid rgba(204,102,0, 0.8);
-  background-color: rgba(204,102,0, 0.2);
-  font-size: 17px;
-  margin-left: 0px;
+
+blockquote {
+	color: #ffd54f;
+	border-left: 5px solid rgba(204, 102, 0, 0.8);
+	background-color: rgba(204, 102, 0, 0.2);
+	font-size: 17px;
+	margin-left: 0px;
 }
+
+
+/*大綱索引Start*/
+
+.headline,
+.headline+ul {
+	/*margin: 30px 0;*/
+	padding: .5em;
+	background: rgba(43, 171, 225, 0.1);
+	font-size: 14px;
+	border-left: 5px solid rgba(43, 171, 225, .3);
+}
+
+.headline a,
+.headline+ul a,
+.headline+ul ol,
+.headline+ul li {
+	/*color: #4E5750;*/
+	color: #cc6600;
+}
+
+.headline ul,
+.headline+ul {
+	/*padding: 0!important;*/
+	margin: 0!important;
+	line-height: 1.0!important;
+	/*list-style-type: none;*/
+}
+
+.headline a:hover,
+.headline+ul a:hover,
+.headline+ul ol:hover,
+.headline+ul li:hover {
+	color: initial;
+	text-decoration: none;
+	color: #ffd54f;
+}
+
+.headline::after {
+	content: "索引";
+	color: #cc6600;
+}
+
+
+/*大綱索引End*/
