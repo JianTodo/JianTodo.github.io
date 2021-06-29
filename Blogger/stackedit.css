@@ -1261,7 +1261,7 @@ canvas {
 template {
     display: none;
 }
-body,
+/*body,
 html {
     color: rgba(0, 0, 0, 0.75);
     font-size: 16px;
@@ -1270,7 +1270,7 @@ html {
     line-height: 1.67;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}
+}*/
 .app--dark .layout__panel--editor,
 .app--dark .layout__panel--preview {
     color: hsla(0, 0%, 100%, 0.75);
