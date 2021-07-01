@@ -10,6 +10,24 @@ body {
 }
 
 
+/* 首圖隱藏 - 需要搭配 Html (Blogger search : <img expr:src='data:post.thumbnailUrl'/>) */
+
+
+/*
+*  <b:else/>
+*  <div class='mobile-index-thumbnail'>
+*      <div class='Image'>
+*          <img expr:src='data:post.firstImageUrl'/>
+*      </div>
+*  </div>
+*/
+
+.mdtable~img:nth-of-type(1) {
+	display: none;
+	width: 0px;
+}
+
+
 /* stackedit plugin*/
 
 blockquote {
