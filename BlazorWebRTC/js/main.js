@@ -100,6 +100,7 @@ const ctx = canvas.getContext('2d');
 
 function loadBodyPix() {
     let options = {
+        architecture: 'MobileNetV1',
         multiplier: 0.75,
         stride: 32,
         quantBytes: 4
@@ -110,27 +111,17 @@ function loadBodyPix() {
 }
 
 async function perform(net) {
+    const segmentation = await net.segmentPerson(videoElement);
 
-    //while (startBtn.disabled && blurBtn.hidden) {
-    //    const segmentation = await net.segmentPerson(video);
+    const backgroundBlurAmount = 6;
+    const edgeBlurAmount = 2;
+    const flipHorizontal = true;
 
-    //    const backgroundBlurAmount = 6;
-    //    const edgeBlurAmount = 2;
-    //    const flipHorizontal = true;
+    bodyPix.drawBokehEffect(
+        canvas, videoElement, segmentation, backgroundBlurAmount,
+        edgeBlurAmount, flipHorizontal);
 
-    //    bodyPix.drawBokehEffect(
-    //        canvas, videoElement, segmentation, backgroundBlurAmount,
-    //        edgeBlurAmount, flipHorizontal);
-    //}
-    while (true) {
-        const segmentation = await net.segmentPerson(videoElement);
-
-        const backgroundBlurAmount = 6;
-        const edgeBlurAmount = 2;
-        const flipHorizontal = true;
-
-        bodyPix.drawBokehEffect(
-            canvas, videoElement, segmentation, backgroundBlurAmount,
-            edgeBlurAmount, flipHorizontal);
+    if (true) {
+        requestAnimationFrame(() => { perform(net); } );
     }
 }
