@@ -327,13 +327,11 @@ function signalingControl(channelName, localStream) {
             console.error('no peerconnection');
             return;
         }
-        const candidateIce = new RTCIceCandidate(candidate);
-        await pc.addIceCandidate(candidateIce);
-        //if (!candidate.candidate) {
-        //    await pc.addIceCandidate(null);
-        //} else {
-        //    await pc.addIceCandidate(candidate);
-        //}
+        if (!candidate.candidate) {
+            await pc.addIceCandidate(null);
+        } else {
+            await pc.addIceCandidate(new RTCIceCandidate(candidate.candidate));
+        }
     }
 }
 
