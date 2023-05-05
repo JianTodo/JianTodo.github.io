@@ -330,7 +330,7 @@ function signalingControl(channelName, localStream) {
         if (!candidate.candidate) {
             await pc.addIceCandidate(null);
         } else {
-            await pc.addIceCandidate(new RTCIceCandidate(candidate.candidate));
+            await pc.addIceCandidate(candidate);
         }
     }
 }
