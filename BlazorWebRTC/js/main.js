@@ -14,7 +14,7 @@ const unblurBtn = document.getElementById('unblur-btn');
 const canvasImg = document.getElementById('canvasImg');
 const ctxImg = canvasImg.getContext('2d');
 const backgroundImg = new Image();
-backgroundImg.src = './images/default.jpg';
+backgroundImg.src = '../images/default.jpg';
 
 const roomName = document.getElementById('roomName');
 const connectRoomBtn = document.getElementById('connectRoom');
@@ -279,7 +279,7 @@ function signalingControl(channelName, localStream) {
         pc.onicecandidate = e => {
             const message = {
                 type: 'candidate',
-                candidate: null,
+                candidate: e.candidate,
             };
             if (e.candidate) {
                 message.candidate = e.candidate.candidate;
@@ -326,10 +326,12 @@ function signalingControl(channelName, localStream) {
             console.error('no peerconnection');
             return;
         }
-        if (!candidate.candidate) {
-            await pc.addIceCandidate(null);
-        } else {
-            await pc.addIceCandidate(candidate);
-        }
+        await pc.addIceCandidate(candidate);
+        //if (!candidate.candidate) {
+        //    await pc.addIceCandidate(null);
+        //} else {
+        //    await pc.addIceCandidate(candidate);
+        //}
     }
 }
+
