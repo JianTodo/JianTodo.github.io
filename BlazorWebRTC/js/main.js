@@ -270,7 +270,13 @@ function signalingControl(channelName, localStream) {
     };
 
     function createPeerConnection() {
-        pc = new RTCPeerConnection();
+        const ice = {
+            "iceServers": [
+                { "url": "stun:stun.l.google.com:19302" },
+            ]
+        };
+        pc = new RTCPeerConnection(ice);
+        //pc = new RTCPeerConnection();
         pc.onicecandidate = e => {
             const message = {
                 type: 'candidate',
@@ -321,7 +327,8 @@ function signalingControl(channelName, localStream) {
             console.error('no peerconnection');
             return;
         }
-        await pc.addIceCandidate(candidate);
+        const candidateIce = new RTCIceCandidate(candidate);
+        await pc.addIceCandidate(candidateIce);
         //if (!candidate.candidate) {
         //    await pc.addIceCandidate(null);
         //} else {
