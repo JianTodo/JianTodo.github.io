@@ -14,7 +14,7 @@ const unblurBtn = document.getElementById('unblur-btn');
 const canvasImg = document.getElementById('canvasImg');
 const ctxImg = canvasImg.getContext('2d');
 const backgroundImg = new Image();
-backgroundImg.src = '../images/default.jpg';
+backgroundImg.src = './images/default.jpg';
 
 const roomName = document.getElementById('roomName');
 const connectRoomBtn = document.getElementById('connectRoom');
