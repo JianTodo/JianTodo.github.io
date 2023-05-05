@@ -270,12 +270,7 @@ function signalingControl(channelName, localStream) {
     };
 
     function createPeerConnection() {
-        const ice = {
-            "iceServers": [
-                { "url": "stun:stun.l.google.com:19302" },
-            ]
-        };
-        pc = new RTCPeerConnection(ice);
+        pc = new RTCPeerConnection();
         pc.onicecandidate = e => {
             const message = {
                 type: 'candidate',
