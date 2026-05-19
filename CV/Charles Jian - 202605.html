@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charles Jian - 202605</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- 黑白主調 + 點綴配色 --- */
+        :root {
+            --bg-body: #e8e8ea;
+            --bg-resume: #ffffff;
+            --bg-sidebar: #f5f5f7;
+            --bg-card: #ffffff;
+            --bg-card-soft: #fafafa;
+
+            --text-primary: #0a0a0a;
+            --text-secondary: #3f3f46;
+            --text-tertiary: #71717a;
+
+            --accent-main: #1a1a1a;       /* 主強調：純黑 */
+            --accent-line: #b91c1c;       /* 點綴酒紅：螢光筆 / 強調線 */
+            --accent-chart1: #1e3a8a;     /* FinTech 深海軍藍 */
+            --accent-chart2: #c2410c;     /* Gaming 燒赭橘 */
+            --accent-chart3: #047857;     /* Cyber 翡翠綠 */
+
+            --border-color: #e4e4e7;
+            --border-strong: #d4d4d8;
+        }
+
+        /* --- 隱藏滾輪，強制置中佈局 --- */
+        html, body { 
+            margin: 0; padding: 0; width: 100vw; height: 100vh; 
+            overflow: hidden; 
+            background-color: var(--bg-body);
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Inter', 'Noto Sans TC', -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        * { box-sizing: border-box; }
+
+        /* --- 絕對單頁式 A4 容器 (精確 A4 比例) --- */
+        .a4-wrapper {
+            position: relative;
+            width: 794px;   /* A4 width @ 96dpi = 210mm */
+            height: 1123px; /* A4 height @ 96dpi = 297mm */
+            background-color: var(--bg-resume);
+            display: flex;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid var(--border-color);
+            transform-origin: center center;
+            overflow: hidden;
+        }
+
+        /* --- 懸浮控制列 --- */
+        .controls {
+            position: fixed;
+            top: 20px; right: 20px;
+            display: flex; gap: 10px; z-index: 10000;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            padding: 8px; border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+        .btn {
+            background: #ffffff; color: var(--text-primary);
+            border: 1px solid var(--border-strong); padding: 8px 16px;
+            border-radius: 4px; font-size: 14px; cursor: pointer;
+            display: flex; align-items: center; gap: 6px;
+            transition: 0.2s; font-weight: 500; font-family: inherit;
+        }
+        .btn:hover { background: #f4f4f5; }
+        .btn.primary { background: #0a0a0a; color: #fff; font-weight: 700; border: 1px solid #0a0a0a; }
+        .btn.primary:hover { background: #27272a; }
+
+        /* --- 中英文切換邏輯 --- */
+        .en { display: none; }
+        .tw { display: block; }
+        span.en, div.en, ul.en { display: none; }
+        span.tw, div.tw, ul.tw { display: inline-block; }
+        ul.tw { display: block; }
+
+        body.show-en .en { display: block; }
+        body.show-en .tw { display: none; }
+        body.show-en span.en, body.show-en div.en { display: inline-block; }
+        body.show-en span.tw, body.show-en div.tw { display: none; }
+        body.show-en ul.en { display: block; }
+
+        /* --- 左右佈局 --- */
+        .sidebar {
+            width: 33%; background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            padding: 22px 18px; display: flex; flex-direction: column;
+        }
+        .main-content {
+            width: 67%; padding: 20px 26px 18px 26px;
+            display: flex; flex-direction: column;
+        }
+
+        /* --- Typography 升級 (防折行與裁切) --- */
+        h1 { font-size: 24px; font-weight: 800; letter-spacing: 0.3px; margin: 0 0 4px 0; color: var(--text-primary); line-height: 1.15; }
+        h1.en { font-size: 22px; letter-spacing: 0; }
+        h2.role { font-size: 12px; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.6px; margin: 0; line-height: 1.4; }
+
+        .section-title {
+            font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;
+            color: var(--text-primary); border-bottom: 2px solid var(--text-primary);
+            padding-bottom: 4px; margin-bottom: 9px; display: flex; align-items: center; gap: 8px;
+        }
+        .section-title i { color: var(--text-primary); font-size: 13px; width: 16px; text-align: center; }
+        .main-content .section-title { margin-top: 8px; font-size: 14.5px; margin-bottom: 8px; }
+        .main-content .section-title:first-child { margin-top: 0; }
+
+        p.summary-text {
+            font-size: 11px; line-height: 1.5; color: var(--text-secondary);
+            text-align: left; margin: 0;
+        }
+
+        /* 螢光筆特效 — 紅點綴底線 */
+        .hl {
+            background: linear-gradient(180deg, transparent 60%, rgba(239, 68, 68, 0.22) 60%);
+            color: var(--text-primary); font-weight: 700; padding: 0 2px;
+        }
+
+        /* --- Sidebar: 個人資訊 --- */
+        .profile-wrapper { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .profile-img { width: 68px; height: 68px; border-radius: 50%; border: 2px solid var(--text-primary); object-fit: cover; flex-shrink: 0; }
+        .profile-text { display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; }
+
+        /* --- Sidebar: 儀表板設計 --- */
+        .dashboard-row {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 8px; margin-bottom: 12px;
+        }
+
+        .dashboard-chart { display: flex; flex-direction: column; align-items: center; width: 42%; }
+        .donut-wrapper { position: relative; width: 55px; height: 55px; margin-bottom: 6px; }
+        .donut-chart {
+            width: 100%; height: 100%; border-radius: 50%;
+            background: conic-gradient(var(--accent-chart1) 0% 45%, var(--accent-chart2) 45% 85%, var(--accent-chart3) 85% 100%);
+            mask: radial-gradient(circle, transparent 55%, black 56%);
+            -webkit-mask: radial-gradient(circle, transparent 55%, black 56%);
+        }
+        .donut-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 8px; font-weight: 700; color: var(--text-secondary); text-align: center; line-height: 1.1; }
+        .donut-center-text span { font-size: 12px; color: var(--text-primary); }
+        .chart-legend { display: flex; flex-direction: column; gap: 3px; font-size: 7.5px; }
+        .legend-item { display: flex; align-items: center; gap: 4px; color: var(--text-secondary); white-space: nowrap; }
+        .dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+
+        .dashboard-contact { width: 58%; border-left: 1px solid var(--border-color); padding-left: 8px; }
+        ul.contact { list-style: none; font-size: 9px; color: var(--text-secondary); margin: 0; padding: 0; }
+        ul.contact li { margin-bottom: 6px; display: flex; align-items: center; gap: 6px; line-height: 1.2; white-space: nowrap;}
+        ul.contact li:last-child { margin-bottom: 0; }
+        ul.contact i { color: var(--text-primary); width: 12px; text-align: center; font-size: 10px; flex-shrink: 0;}
+
+        /* --- Sidebar: 技術矩陣 (垂直排版，避免 tag 擠壓跑版) --- */
+        .skill-matrix { margin-bottom: 12px; display: flex; flex-direction: column; gap: 7px; }
+        .skill-row { display: flex; flex-direction: column; gap: 5px; }
+        .skill-name {
+            color: var(--text-primary); font-weight: 700; font-size: 10px;
+            text-transform: uppercase; letter-spacing: 0.8px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .skill-name::before {
+            content: ""; display: inline-block; width: 8px; height: 2px;
+            background: var(--accent-line); flex-shrink: 0;
+        }
+        .skill-tags { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-start; }
+        .tag {
+            background: #ffffff; border: 1px solid var(--border-strong);
+            padding: 2px 7px; border-radius: 3px; font-size: 9px;
+            color: var(--text-secondary); white-space: nowrap; font-weight: 500;
+        }
+
+        /* --- Sidebar: 專業證照 (Credly) --- */
+        .cert-grid { display: flex; flex-direction: column; gap: 3px; margin-bottom: 12px;}
+        .cert-card {
+            background: var(--bg-card); border: 1px solid var(--border-color); padding: 5px 8px;
+            border-radius: 6px; text-decoration: none; display: flex;
+            align-items: center; gap: 8px; transition: 0.2s;
+        }
+        .cert-card:hover { border-color: var(--text-primary); background: #fafafa; }
+        .cert-icon { font-size: 12px; color: var(--text-primary); width: 14px; text-align: center;}
+        .cert-text { font-size: 9.5px; color: var(--text-secondary); font-weight: 500;}
+        .cert-card:hover .cert-text { color: var(--text-primary); }
+
+        /* --- Sidebar: 專業文獻與著作 --- */
+        .ref-grid { display: flex; flex-direction: column; gap: 3px; margin-bottom: 12px;}
+        .ref-card {
+            background: var(--bg-card); border: 1px solid var(--border-color); padding: 5px 8px;
+            border-radius: 6px; text-decoration: none; display: flex;
+            align-items: center; gap: 8px; transition: 0.2s;
+        }
+        .ref-card:hover { border-color: var(--text-primary); background: #fafafa; }
+        .ref-icon { font-size: 12px; color: var(--text-primary); width: 14px; text-align: center;}
+        .ref-text { font-size: 9.5px; color: var(--text-secondary); font-weight: 500; line-height: 1.3;}
+        .ref-card:hover .ref-text { color: var(--text-primary); }
+
+        /* --- Sidebar: 學歷背景 --- */
+        .edu-grid { display: flex; flex-direction: column; gap: 4px;}
+        .edu-card {
+            background: var(--bg-card); border: 1px solid var(--border-color); padding: 6px 9px;
+            border-radius: 6px; border-left: 3px solid var(--text-primary);
+        }
+        .edu-card h4 { margin: 0 0 2px 0; font-size: 10.5px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .edu-card p { margin: 0; font-size: 9px; color: var(--text-tertiary); font-weight: 500; }
+
+        /* --- Main Content: 經歷列表 --- */
+        .job-item { margin-bottom: 6px; }
+        .job-item:last-child { margin-bottom: 0; }
+
+        .job-header { display: flex; align-items: center; gap: 9px; margin-bottom: 3px; }
+        
+        /* 真實 Logo 圖片優化 */
+        .company-logo {
+            width: 30px; height: 30px; min-width: 30px; border-radius: 5px;
+            background: #ffffff; border: 1px solid var(--border-strong);
+            display: flex; justify-content: center; align-items: center;
+            position: relative; overflow: hidden; flex-shrink: 0; padding: 2px;
+        }
+        .company-logo img { width: 100%; height: 100%; object-fit: contain; }
+
+        .job-meta { flex: 1; min-width: 0; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .job-title-group { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; min-width: 0; }
+        .job-title { font-size: 13px; font-weight: 700; color: var(--text-primary); white-space: nowrap; }
+        .job-company { font-size: 11.5px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
+        .job-date { font-size: 10px; color: var(--text-tertiary); font-family: 'Inter', monospace; white-space: nowrap; flex-shrink: 0; }
+
+        ul.job-bullets { list-style: none; padding-left: 0; margin: 0; }
+        ul.job-bullets li {
+            position: relative;
+            padding-left: 12px;
+            font-size: 10.5px;
+            color: var(--text-secondary);
+            margin-bottom: 1px;
+            line-height: 1.4;
+            text-align: left;
+        }
+        ul.job-bullets li::before {
+            content: "▹"; position: absolute; left: 0; top: 0;
+            color: var(--text-primary); font-weight: bold; font-size: 12px;
+        }
+        ul.job-bullets strong { color: var(--text-primary); font-weight: 700; }
+
+        /* --- 列印最佳化 (精準 A4 列印防護) --- */
+        @media print {
+            /* 強制設定列印頁面為 A4 無邊界 */
+            @page { size: A4; margin: 0; }
+            
+            html, body { 
+                overflow: visible; height: auto; background: #fff; 
+                display: block; margin: 0; padding: 0; 
+            }
+            
+            .a4-wrapper { 
+                /* 強制 A4 尺寸，捨棄 JS 縮放 */
+                width: 210mm !important; 
+                height: 297mm !important; 
+                transform: none !important; 
+                box-shadow: none; margin: 0; 
+                background: #fff; border: none;
+                -webkit-print-color-adjust: exact; print-color-adjust: exact;
+            }
+            .controls { display: none; }
+            
+            :root {
+                --bg-resume: #ffffff;
+                --bg-sidebar: #f5f5f7;
+                --bg-card: #ffffff;
+                --text-primary: #0a0a0a;
+                --text-secondary: #3f3f46;
+                --text-tertiary: #71717a;
+                --border-color: #e4e4e7;
+                --border-strong: #d4d4d8;
+                --accent-main: #0a0a0a;
+                --accent-line: #ef4444;
+            }
+            .hl { background: linear-gradient(180deg, transparent 60%, rgba(239, 68, 68, 0.25) 60%); color: #0a0a0a; }
+            .tag { background: #fff; color: #3f3f46; border-color: #d4d4d8; }
+        }
+    </style>
+</head>
+<body class="show-tw">
+
+    <div class="controls">
+        <button class="btn" onclick="document.body.classList.toggle('show-en'); document.body.classList.toggle('show-tw');">
+            <i class="fa-solid fa-language"></i>
+            <span class="tw">EN</span><span class="en">中文</span>
+        </button>
+        <button class="btn primary" onclick="window.print()">
+            <i class="fa-solid fa-print"></i> PDF
+        </button>
+    </div>
+
+    <div class="a4-wrapper">
+        
+        <aside class="sidebar">
+            
+            <div class="profile-wrapper">
+                <img src="https://raw.githubusercontent.com/JianTodo/JianTodo.github.io/master/Headshot-20260515.jpg" alt="Charles Jian" class="profile-img">
+                <div class="profile-text">
+                    <h1 class="tw">簡宗宇</h1>
+                    <h1 class="en">Charles Jian</h1>
+                    <h2 class="role tw">技術經理<br>系統架構師</h2>
+                    <h2 class="role en">Principal Architect</h2>
+                </div>
+            </div>
+
+            <div class="dashboard-row">
+                <div class="dashboard-chart">
+                    <div class="donut-wrapper">
+                        <div class="donut-chart"></div>
+                        <div class="donut-center-text"><span>12+</span><br>Years</div>
+                    </div>
+                    <div class="chart-legend">
+                        <div class="legend-item"><div class="dot" style="background: var(--accent-chart1);"></div><span class="tw">FinTech (45%)</span><span class="en">FinTech (45%)</span></div>
+                        <div class="legend-item"><div class="dot" style="background: var(--accent-chart2);"></div><span class="tw">Gaming (40%)</span><span class="en">Gaming (40%)</span></div>
+                        <div class="legend-item"><div class="dot" style="background: var(--accent-chart3);"></div><span class="tw">Cybersec (15%)</span><span class="en">Cybersec (15%)</span></div>
+                    </div>
+                </div>
+                <div class="dashboard-contact">
+                    <ul class="contact">
+                        <li><i class="fa-solid fa-location-arrow"></i> <span>Taipei, Taiwan</span></li>
+                        <li><i class="fa-solid fa-envelope"></i> <span>cha0939@gmail.com</span></li>
+                        <li><i class="fa-solid fa-phone"></i> <span>+886 922160805</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-title"><i class="fa-solid fa-layer-group"></i> <span class="tw">專業技術領域</span><span class="en">Expertise</span></div>
+            <div class="skill-matrix">
+                <div class="skill-row">
+                    <div class="skill-name">Architecture</div>
+                    <div class="skill-tags"><span class="tag">Microservices</span><span class="tag">Event-Driven</span><span class="tag">HA</span></div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-name">Backend</div>
+                    <div class="skill-tags"><span class="tag">C#/.NET</span><span class="tag">Java</span><span class="tag">C/C++</span></div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-name">Frontend</div>
+                    <div class="skill-tags"><span class="tag">Vue</span><span class="tag">Angular</span><span class="tag">TS/JS</span></div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-name">Infra/DevOps</div>
+                    <div class="skill-tags"><span class="tag">K8s</span><span class="tag">Docker</span><span class="tag">PVE</span><span class="tag">Harvester</span><span class="tag">Rancher</span><span class="tag">Ansible</span></div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-name">Database</div>
+                    <div class="skill-tags"><span class="tag">MSSQL</span><span class="tag">Oracle</span><span class="tag">MongoDB</span></div>
+                </div>
+            </div>
+
+            <div class="section-title"><i class="fa-solid fa-certificate"></i> <span class="tw">國際認證 (Credly)</span><span class="en">Certifications</span></div>
+            <div class="cert-grid">
+                <a href="https://www.credly.com/badges/b904e107-14da-4879-af1d-3b7891e1610a/public_url" target="_blank" class="cert-card">
+                    <i class="fa-solid fa-award cert-icon"></i><span class="cert-text">IBM Architect Profession - L1</span>
+                </a>
+                <a href="https://www.credly.com/badges/3cb28a77-a962-4060-871e-8bcaa544764a/public_url" target="_blank" class="cert-card">
+                    <i class="fa-solid fa-award cert-icon"></i><span class="cert-text">Microsoft: DevOps Engineer Expert</span>
+                </a>
+                <a href="https://www.credly.com/badges/83b85d6e-45b4-49e8-9147-0904886b275f/public_url" target="_blank" class="cert-card">
+                    <i class="fa-solid fa-award cert-icon"></i><span class="cert-text">Microsoft: Azure Solutions Architect</span>
+                </a>
+                <a href="https://www.credly.com/badges/225126d5-d16a-4853-8bcc-764999884406/public_url" target="_blank" class="cert-card">
+                    <i class="fa-solid fa-award cert-icon"></i><span class="cert-text">Microsoft: Azure Security Engineer</span>
+                </a>
+                <a href="https://www.credly.com/badges/32ffacc3-c977-4aee-9c43-de83d649838e/public_url" target="_blank" class="cert-card">
+                    <i class="fa-solid fa-award cert-icon"></i><span class="cert-text">Microsoft: Azure Developer</span>
+                </a>
+                <a href="https://www.credly.com/badges/37271962-4e6e-464c-b1e8-fd76a375d4ef/public_url" target="_blank" class="cert-card">
+                    <i class="fa-solid fa-award cert-icon"></i><span class="cert-text">Microsoft: Azure Fundamentals</span>
+                </a>
+            </div>
+
+            <div class="section-title"><i class="fa-solid fa-book-bookmark"></i> <span class="tw">專業文獻與著作</span><span class="en">Publications</span></div>
+            <div class="ref-grid">
+                <a href="https://github.com/JianTodo/JianTodo.github.io/blob/master/%E9%87%91%E8%9E%8D%E9%80%9A%E8%AD%98%20-%20%E6%9C%9F%E8%B2%A8%20-%2020251210%20-%20v1.pptx" target="_blank" class="ref-card">
+                    <i class="fa-solid fa-chart-line ref-icon"></i>
+                    <span class="ref-text tw">金融通識 - 期貨教學架構指南</span><span class="ref-text en">Futures & Trading Architecture</span>
+                </a>
+                <a href="https://github.com/JianTodo/JianTodo.github.io/blob/master/%E5%8D%94%E5%8A%A9%E8%A6%96%E9%9A%9C%E8%80%85%E8%BE%A8%E5%88%A5%E7%89%A9%E5%93%81%E7%9A%84RFID%E8%BC%94%E5%8A%A9%E7%B3%BB%E7%B5%B1.pdf" target="_blank" class="ref-card">
+                    <i class="fa-solid fa-microchip ref-icon"></i>
+                    <span class="ref-text tw">RFID 視障輔助系統 (硬體整合)</span><span class="ref-text en">RFID Assistive System</span>
+                </a>
+                <a href="https://github.com/JianTodo/JianTodo.github.io/blob/master/%E6%94%BE%E9%AC%86%E6%B3%A2%E8%98%AD%E5%BC%8F%E7%94%A8%E6%96%BC%E5%A4%A7%E9%87%8F%E6%A8%A1%E7%B5%84%E4%B9%8B%E5%B9%B3%E9%9D%A2%E8%A6%8F%E5%8A%83.pdf" target="_blank" class="ref-card">
+                    <i class="fa-solid fa-network-wired ref-icon"></i>
+                    <span class="ref-text tw">CUDA 大量模組平面規劃</span><span class="ref-text en">CUDA Module Floorplanning</span>
+                </a>
+            </div>
+
+            <div class="section-title"><i class="fa-solid fa-graduation-cap"></i> <span class="tw">學歷背景</span><span class="en">Education</span></div>
+            <div class="edu-grid">
+                <div class="edu-card">
+                    <h4 class="tw">國立臺北科技大學</h4><h4 class="en">National Taipei Univ. of Technology</h4>
+                    <p class="tw">電機工程碩士 (2010 - 2012)</p><p class="en">Master of Electrical Eng. (2010-2012)</p>
+                </div>
+                <div class="edu-card">
+                    <h4 class="tw">大同大學</h4><h4 class="en">Tatung University</h4>
+                    <p class="tw">應用數學學士 (2006 - 2010)</p><p class="en">Bachelor of Applied Math. (2006-2010)</p>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            
+            <div class="section-title"><i class="fa-solid fa-user-astronaut"></i> <span class="tw">執行摘要</span><span class="en">Executive Summary</span></div>
+            <p class="summary-text tw">
+                資歷 12 年之技術負責人，深度跨足<strong>金融期貨、線上遊戲、企業資安</strong>三大高負載產業。專精於<span class="hl">分散式事件驅動架構設計</span>、低延遲交易系統重構，以及零停機 HA 基礎設施建置。具備將大型 Legacy 系統完整轉型為現代化 <strong>Event-Driven</strong> 架構之實戰經驗，熟稔 PVE 虛擬化與雙網段拓撲設計。擅於將商業需求量化為可量測之工程指標，建立工程文化與標準化交付流程，最大化團隊產出效益。
+            </p>
+            <p class="summary-text en">
+                Principal Architect with 12 years of cross-industry experience spanning <strong>FinTech, Gaming, and Cybersecurity</strong>. Specializes in <span class="hl">distributed event-driven architecture</span>, low-latency trading system re-engineering, and zero-downtime HA infrastructure. Proven track record of migrating large-scale legacy systems to modern <strong>Event-Driven</strong> architectures, with deep expertise in PVE virtualization and dual-segment network topology. Adept at translating business requirements into measurable engineering KPIs and establishing standardized delivery practices that scale team output.
+            </p>
+
+            <div class="section-title"><i class="fa-solid fa-briefcase"></i> <span class="tw">核心專案與戰績</span><span class="en">Professional Experience</span></div>
+            
+            <div class="job-item">
+                <div class="job-header">
+                    <div class="company-logo"><img src="https://raw.githubusercontent.com/JianTodo/JianTodo.github.io/master/CV/uc.jpg" alt="Grand Capital"></div>
+                    <div class="job-meta">
+                        <div class="job-title-group">
+                            <div class="job-title tw">技術經理</div><div class="job-title en">Technical Manager</div>
+                            <div class="job-company tw">優式資本 (Grand Capital)</div><div class="job-company en">Grand Capital</div>
+                        </div>
+                        <div class="job-date">Nov 2025 - Present</div>
+                    </div>
+                </div>
+                <ul class="job-bullets tw">
+                    <li><strong>Event-Driven 全面轉型：</strong>主導交易系統由 DB-Centric 架構遷移至以 <strong>NATS JetStream</strong> 為核心之事件驅動設計，導入背壓控制、流量整型與冪等保證機制，徹底消除高頻寫入下之帳務漂移。</li>
+                    <li><strong>低延遲效能工程：</strong>於 100% 帳務一致性前提下，端到端延遲<span class="hl">壓縮 3~8 秒</span>，峰值 TPS 自基準線提升至 <span class="hl">3,900 ~ 4,200</span>，建立可重複驗證之壓測基準。</li>
+                    <li><strong>HA 基礎設施：</strong>獨立建構 <strong>PVE</strong> 虛擬化平台與雙網段路由策略，整合 Keepalived / Ansible 完成 Active-Standby 自動故障切換與設定漂移管理。</li>
+                    <li><strong>維運自動化：</strong>透過容量規劃與分層告警，將每日 5 小時值班巡檢壓縮至<span class="hl">每月 &lt; 10 分鐘人工介入</span>，釋出可觀工程資源。</li>
+                </ul>
+                <ul class="job-bullets en">
+                    <li><strong>Event-Driven Re-architecture:</strong> Led the migration from a DB-centric trading system to a <strong>NATS JetStream</strong> event-driven design, introducing backpressure, traffic shaping and idempotency guarantees to eliminate high-frequency reconciliation drift.</li>
+                    <li><strong>Low-Latency Engineering:</strong> Under 100% reconciliation accuracy, <span class="hl">reduced end-to-end latency by 3–8s</span> and lifted peak TPS to <span class="hl">3,900–4,200</span>, with reproducible load-test baselines.</li>
+                    <li><strong>HA Infrastructure:</strong> Built <strong>PVE</strong> virtualization and dual-segment routing in-house; orchestrated Active-Standby failover and configuration drift control via Keepalived and Ansible.</li>
+                    <li><strong>Operational Automation:</strong> Through capacity planning and tiered alerting, compressed daily 5-hour monitoring overhead to <span class="hl">&lt; 10 minutes per month</span>.</li>
+                </ul>
+            </div>
+
+            <div class="job-item">
+                <div class="job-header">
+                    <div class="company-logo"><img src="https://raw.githubusercontent.com/JianTodo/JianTodo.github.io/master/CV/IBM.jpg" alt="IBM"></div>
+                    <div class="job-meta">
+                        <div class="job-title-group">
+                            <div class="job-title tw">應用架構師</div><div class="job-title en">Application Architect</div>
+                            <div class="job-company">IBM</div>
+                        </div>
+                        <div class="job-date">Mar 2019 - Oct 2025</div>
+                    </div>
+                </div>
+                <ul class="job-bullets tw">
+                    <li><strong>中信 Navigator 中台：</strong>主導 <span class="hl">NT$ 8 億規模</span>核心架構規劃與 TCS / 匯兌系統遷移，重新定義跨系統資料契約與服務邊界，內部作業效率提升 <strong>300%</strong>。</li>
+                    <li><strong>富邦自營市場系統：</strong>帶領團隊導入微前端架構與工程治理流程，端到端交付速度<span class="hl">提升 200%</span>；同步完成 AS400 RPG 至開放平台之語意保真轉譯。</li>
+                    <li><strong>玉山核心轉型：</strong>擔任跨境簽核系統首席架構師，督導 13 人開發團隊，建構合規簽核引擎與標準化作業流程，整體營運效率提升 <strong>80%</strong>。</li>
+                    <li><strong>大聯大 (WPG) 上雲：</strong>主導 <strong>Azure / AKS</strong> 部署策略與分散式進銷存演算法設計，建立可橫向擴展之雲原生交付管線。</li>
+                </ul>
+                <ul class="job-bullets en">
+                    <li><strong>CTBC Navigator Platform:</strong> Architected an <span class="hl">NT$800M</span> core platform migration covering TCS and FX systems; redefined cross-system data contracts and service boundaries, raising internal efficiency by <strong>300%</strong>.</li>
+                    <li><strong>Fubon Proprietary Markets:</strong> Led micro-frontend adoption and engineering governance, accelerating delivery throughput by <span class="hl">200%</span>; executed semantic-preserving migration of AS400 RPG to open platforms.</li>
+                    <li><strong>E.SUN Core Transformation:</strong> Lead Architect for cross-border approval systems, directing a 13-engineer team to deliver a compliance-grade approval engine and improving operations efficiency by <strong>80%</strong>.</li>
+                    <li><strong>WPG Cloud Migration:</strong> Drove <strong>Azure / AKS</strong> deployment strategy and distributed inventory algorithms, establishing a horizontally scalable cloud-native delivery pipeline.</li>
+                </ul>
+            </div>
+
+            <div class="job-item">
+                <div class="job-header">
+                    <div class="company-logo"><img src="https://raw.githubusercontent.com/JianTodo/JianTodo.github.io/master/CV/Trend.jpg" alt="Trend Micro"></div>
+                    <div class="job-meta">
+                        <div class="job-title-group">
+                            <div class="job-title tw">資深研發工程師</div><div class="job-title en">Sr. R&D Engineer</div>
+                            <div class="job-company tw">趨勢科技 (Trend Micro)</div><div class="job-company en">Trend Micro</div>
+                        </div>
+                        <div class="job-date">Jul 2018 - Feb 2019</div>
+                    </div>
+                </div>
+                <ul class="job-bullets tw">
+                    <li><strong>安裝核心重構：</strong>主導 Control Manager（日本市場佔有率 <strong>98%</strong>）安裝核心由 InstallShield 遷移至 <strong>WiX Toolset</strong>，解構近 20 年累積之安裝行為與相容性技術債。</li>
+                    <li><strong>品質與安全強化：</strong>重新設計安裝行為驗證框架與簽章機制，<span class="hl">安全性提升 40%、問題定位效率提升 70%</span>，確保 GA 版本如期 release。</li>
+                </ul>
+                <ul class="job-bullets en">
+                    <li><strong>Installation Core Re-architecture:</strong> Led the migration of Control Manager's installer (<strong>98% market share in Japan</strong>) from InstallShield to <strong>WiX Toolset</strong>, dismantling nearly 20 years of accumulated compatibility debt.</li>
+                    <li><strong>Quality & Security Hardening:</strong> Redesigned the installer validation and signing framework, <span class="hl">improving security by 40% and defect localization by 70%</span> to enable on-schedule GA release.</li>
+                </ul>
+            </div>
+
+            <div class="job-item">
+                <div class="job-header">
+                    <div class="company-logo"><img src="https://raw.githubusercontent.com/JianTodo/JianTodo.github.io/master/CV/gamania.jpg" alt="Gamania"></div>
+                    <div class="job-meta">
+                        <div class="job-title-group">
+                            <div class="job-title tw">系統架構師</div><div class="job-title en">System Architect</div>
+                            <div class="job-company tw">遊戲橘子 (GASH)</div><div class="job-company en">Gamania (GASH)</div>
+                        </div>
+                        <div class="job-date">May 2015 - Jul 2018</div>
+                    </div>
+                </div>
+                <ul class="job-bullets tw">
+                    <li><strong>金流與會員系統重構：</strong>導入 N-Tier 分層、讀寫分離、HA 容錯與 WebSocket 異步支付機制，建構可重用之支付閘道抽象層，支撐多渠道金流整合。</li>
+                    <li><strong>《天堂 M》上線扛載：</strong>穩定承載峰值<span class="hl">每秒 500+ 新連線、累計 600 萬在線連線</span>，協調 <strong>32 台</strong>實體機之水平擴展、健康檢查與流量調度策略。</li>
+                    <li><strong>規模化營運：</strong>支撐千萬級會員快速擴張，營收成長至 <strong>NT$ 4 億元</strong>，<span class="hl">淨利達成 4 倍躍升</span>。</li>
+                </ul>
+                <ul class="job-bullets en">
+                    <li><strong>Payment & Membership Re-architecture:</strong> Introduced N-Tier layering, read-write separation, HA failover and WebSocket-based async payments, delivering a reusable payment gateway abstraction across multiple channels.</li>
+                    <li><strong>Lineage M Launch Surge:</strong> Sustained peak loads of <span class="hl">500+ new connections/sec and 6M total online sessions</span>, orchestrating horizontal scaling, health checks and traffic shaping across <strong>32 bare-metal servers</strong>.</li>
+                    <li><strong>Scaled Operations:</strong> Supported growth to 20M+ users, driving revenue to <strong>NT$400M</strong> and <span class="hl">quadrupling net profit</span>.</li>
+                </ul>
+            </div>
+
+            <div class="job-item" style="margin-bottom: 0;">
+                <div class="job-header">
+                    <div class="company-logo"><img src="https://raw.githubusercontent.com/JianTodo/JianTodo.github.io/master/CV/syscom.jpg" alt="Syscom"></div>
+                    <div class="job-meta">
+                        <div class="job-title-group">
+                            <div class="job-title tw">研發工程師</div><div class="job-title en">R&D Engineer</div>
+                            <div class="job-company tw">凌群電腦 (Syscom Group)</div><div class="job-company en">Syscom Group</div>
+                        </div>
+                        <div class="job-date">Nov 2012 - Mar 2015</div>
+                    </div>
+                </div>
+                <ul class="job-bullets tw">
+                    <li><strong>元大寶來核心帳務：</strong>採用 Linked List 實作 FIFO 撮合引擎，於<span class="hl">17 秒內完成 170 萬筆</span>交易壓力測試，達生產級延遲與吞吐標準。</li>
+                    <li><strong>大型公部門系統：</strong>交付交通部公車到站資訊系統（<strong>Solar 異步框架</strong>）與法務部矯正機關管理系統，跨越政府專案合規驗收與資安稽核要求。</li>
+                </ul>
+                <ul class="job-bullets en">
+                    <li><strong>Yuanta Core Accounting:</strong> Implemented a Linked-List FIFO matching engine, completing <span class="hl">1.7M trades in 17 seconds</span> under stress testing — meeting production-grade latency and throughput standards.</li>
+                    <li><strong>Public Sector Systems:</strong> Delivered the MoT Bus Arrival information system (<strong>Solar async framework</strong>) and the MoJ Correctional Facility management system, clearing government compliance and security audits.</li>
+                </ul>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        function scaleResume() {
+            const wrapper = document.querySelector('.a4-wrapper');
+            const winW = window.innerWidth;
+            const winH = window.innerHeight;
+            const w = 794;
+            const h = 1123;
+            const scale = Math.min((winW - 40) / w, (winH - 40) / h);
+            wrapper.style.transform = `scale(${scale})`;
+        }
+        window.addEventListener('resize', scaleResume);
+        window.addEventListener('DOMContentLoaded', scaleResume);
+    </script>
+</body>
+</html>
